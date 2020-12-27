@@ -28,7 +28,7 @@ class Codebreaker
     return input
   end
 
-  def get_computer_try # (reds, whites)
+  def get_computer_try
     if @container_for_guesses.size < 4
       check_every_color
     else
@@ -66,7 +66,7 @@ class Codebreaker
       puts "Give us the code to break!"
       @secret_code = get_human_input
     else
-      @secret_code = [COLORED_PEGS.sample, COLORED_PEGS.sample, COLORED_PEGS.sample, COLORED_PEGS.sample]
+      @secret_code = COLORED_PEGS.sample(4)
       puts "Enter your combination of four colors!"
     end
   end

@@ -1,6 +1,25 @@
 module Pegs
   COLORED_PEGS = ("1".."6").to_a
   HINT_PEG = "\u23FA".center(2)
+
+  def give_hint(secret, guess)
+    # Knuth's suggestion
+    pegs = {:reds => 0, :whites => 0}
+    count_reds_and_whites = []
+    # red pegs
+    for i in (0..3)
+      if guess[i] == secret[i]
+        pegs[:reds] += 1
+      end
+    end
+    # red + white pegs
+    COLORED_PEGS.each do |i|
+      count_reds_and_whites << [secret.count(i), guess.count(i)].min
+    end
+    # white pegs
+    pegs[:whites] = count_reds_and_whites.inject(:+) - pegs[:reds]
+    pegs
+  end
 end
 
 class Board
@@ -16,37 +35,19 @@ class Board
     peg.map{|i| self.color_peg(i)}.join
   end
 
-  def give_hint(secret, guess)
-    # Knuth's suggestion
-    reds = 0
-    whites = 0
-    count_reds_and_whites = []
-    # red pegs
-    for i in (0..3)
-      if guess[i] == secret[i]
-        @board_lines << HINT_PEG.red
-        reds += 1
-      end
+  def populate_board(secret, guess)
+    @board_lines << color_input(guess).ljust(53, "_")
+    pegs = self.give_hint(secret, guess)
+    pegs[:reds].times do
+      @board_lines << HINT_PEG.red
     end
-    # red + white pegs
-    COLORED_PEGS.each do |i|
-      count_reds_and_whites << [secret.count(i), guess.count(i)].min
-    end
-    # white pegs
-    whites = count_reds_and_whites.inject(:+) - reds
-    whites.times do
+    pegs[:whites].times do
       @board_lines << HINT_PEG
     end
     @board_lines << "\n"
     if guess == secret
       end_game
     end
-
-  end
-
-  def populate_board(secret, guess)
-    @board_lines << color_input(guess).ljust(53, "_")
-    self.give_hint(secret, guess)
   end
 
   def end_game

@@ -13,7 +13,6 @@ class Mastermind
     @codebreaker = Codebreaker.new(@interface.get_role)
     @board = Board.new
     @counter = 1
-
   end
 
 
@@ -26,6 +25,7 @@ class Mastermind
       @board.populate_board(@codebreaker.secret_code, @codebreaker.breaking_code)
       puts @board.board_lines
       @counter += 1
+      sleep(1)
     end
     puts ""
     puts "Sorry! This is the secret code!"
